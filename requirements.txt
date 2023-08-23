@@ -8,3 +8,4 @@ py3langid
 bs4
 googlesearch-python
 eunjeon
+serverinfo
