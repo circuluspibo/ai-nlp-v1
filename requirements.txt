@@ -1,7 +1,6 @@
 transformers
 fastapi
 uvicorn
-konlpy
 pydantic==1.10.4
 #fasttext-langdetect
 pillow
