@@ -69,6 +69,8 @@ class Chat(BaseModel):
   top_k = 0
   max = 1024
 
+pattern = r'\([^])]*\)'
+
 to = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 PROMPT_DICT = {
@@ -254,7 +256,7 @@ def monitor():
 	return si.getAll()
 
 @app.post("/qa") 
-def qa(Query : query): 
+def qa(query : Query): 
     question = query['q']
     context = query['c']
     result = model({ "question" : question,  "context" : context }) 
