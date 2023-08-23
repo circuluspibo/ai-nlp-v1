@@ -239,7 +239,7 @@ def translate2(sentence):
 def load_category():
   root_path = '.'
   category_path = f"{root_path}/data/label.txt"
-  c_f = open(category_path,'r')
+  c_f = open(category_path,'r',encoding="utf-8")
   category_lines = c_f.readlines()
   category = []
   
