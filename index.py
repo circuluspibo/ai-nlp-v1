@@ -55,8 +55,9 @@ model = ElectraForQuestionAnswering.from_pretrained("monologg/koelectra-base-v3-
 model = pipeline("question-answering", tokenizer=tokenizer, model=model, device=0) 
 mecab = Mecab() 
 
-class Param(BaseModel):
-  prompt : str
+class Query(BaseModel):
+  q : str
+  c : str
 
 class Chat(BaseModel):
   prompt : str
@@ -252,37 +253,47 @@ from serverinfo import si
 def monitor():
 	return si.getAll()
 
-@app.get("/qa") 
-def qa(question : str, context : str): 
-    manager = Manager()
-
-    return_result = manager.dict()
-    # as the inference is failing 
-    p = Process(target = inference,args=(question, answer,return_result,))
-    p.start()
-    p.join()
-    # print(return_result)
-    result = return_result['all_tags']
-    print(result)
+@app.post("/qa") 
+def qa(Query : query): 
+    question = query['q']
+    context = query['c']
+    result = model({ "question" : question,  "context" : context }) 
     #print(result) 
     answer = result["answer"] 
+
+    if answer.find('(') > -1 and answer.find(')') < 0:
+        if(answer.startswith('(')):
+            answer.replace("(","")
+        else:
+            answer = answer + ")"
+    if answer.endswith('의'): 
+        answer = answer.replace("의","")       
+    answer = re.sub(pattern=pattern, repl='', string=answer )
+
     list = mecab.pos(result["answer"]) 
     print(list) 
     for word in list: 
         print(word[1]) 
         #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
         #if word[1].startswith('J'):
-        if answer.endswith('의'):
-            answer = answer.replace('의','')
-        answer = answer.replace('이다','')
-        answer = answer.replace('라는','')
-        if word[1].startswith('J') and word[0] != "링": 
+        #if answer.endswith('의'):
+        #    answer = answer.replace('의','')
+        #answer = answer.replace('이다','')
+        #answer = answer.replace('라는','')
+        if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
             answer = answer.replace(word[0],"")
-        if answer.find('(') > -1 and answer.find(')') < 0:
-            answer = answer + ")"
+        if word[1].startswith('VCP'): 
+            answer = answer.replace(word[0],"") 
+        if word[1].startswith('SS'): 
+            answer = answer.replace(word[0],"")   
+        if word[1].endswith('F'): 
+            answer = answer.replace(word[0],"")                        
+        #if answer.find('(') > -1 and answer.find(')') < 0:
+        #    answer = answer + ")"
         #if answer.find(''  
-    result["answer"] = answer 
     print(result)
+    
+    result["answer"] = answer 
     return result 
 
 @app.get("/v1/language", summary="어느 언어인지 분석합니다.")
