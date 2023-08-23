@@ -98,19 +98,19 @@ summary_token = PreTrainedTokenizerFast.from_pretrained('gogamza/kobart-summariz
 summary_model = BartForConditionalGeneration.from_pretrained('gogamza/kobart-summarization',torch_dtype=torch.float16)
 summary_model.to(to)
 
-ko2en_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-ko-en-v2',torch_dtype=torch.float16)
-ko2en_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-ko-en-v2',torch_dtype=torch.float16)
-ko2en_model.to(to)
+#ko2en_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-ko-en-v2',torch_dtype=torch.float16)
+#ko2en_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-ko-en-v2',torch_dtype=torch.float16)
+#ko2en_model.to(to)
 
-en2ko_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-en-ko-v2',torch_dtype=torch.float16)
-en2ko_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-en-ko-v2',torch_dtype=torch.float16)
-en2ko_model.to(to)
+#en2ko_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-en-ko-v2',torch_dtype=torch.float16)
+#en2ko_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-en-ko-v2',torch_dtype=torch.float16)
+#en2ko_model.to(to)
 
-#ko2en = 'circulus/canvers-ko2en-v1'
-#pipe_ko2en = pipeline("text2text-generation", model=ko2en, tokenizer=ko2en, device=0)
-pipe_ko2en = pipeline("text2text-generation", model=ko2en_model, tokenizer=ko2en_token, device=0)
+ko2en = 'circulus/canvers-ko2en-v1'
+pipe_ko2en = pipeline("text2text-generation", model=ko2en, tokenizer=ko2en, device=0)
+#pipe_ko2en = pipeline("text2text-generation", model=ko2en_model, tokenizer=ko2en_token, device=0)
 
-#en2ko = 'circulus/canvers-en2ko-v1'
-#pipe_en2ko = pipeline("text2text-generation", model=en2ko, tokenizer=en2ko, device=0)
-pipe_en2ko = pipeline("text2text-generation", model=en2ko_model, tokenizer=en2ko_token, device=0)
+en2ko = 'circulus/canvers-en2ko-v1'
+pipe_en2ko = pipeline("text2text-generation", model=en2ko, tokenizer=en2ko, device=0)
+#pipe_en2ko = pipeline("text2text-generation", model=en2ko_model, tokenizer=en2ko_token, device=0)
 

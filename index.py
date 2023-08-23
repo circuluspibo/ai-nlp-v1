@@ -59,6 +59,9 @@ class Query(BaseModel):
   q : str
   c : str
 
+class Param(BaseModel):
+  prompt : str
+
 class Chat(BaseModel):
   prompt : str
   history : list
