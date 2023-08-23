@@ -389,7 +389,7 @@ def copywrite(input : str, type='기본'):
   input_ids = torch.LongTensor(encoded).unsqueeze(dim=0)
 
   beam_outputs = copywrite_model.generate(
-    input_ids,  #.to(to)
+    input_ids.to(to),
     min_length=12,
     max_length=64, 
     num_beams=5, 
@@ -399,7 +399,7 @@ def copywrite(input : str, type='기본'):
   )
 
   sample_outputs = copywrite_model.generate(
-    input_ids, #.to(to)
+    input_ids.to(to),
     do_sample=True, 
     min_length=12,
     max_length=64, 
@@ -430,7 +430,7 @@ def letter(input : str):
   input_ids = torch.LongTensor(encoded).unsqueeze(dim=0)
 
   beam_outputs = letter_model.generate(
-    input_ids, #.to(to)
+    input_ids.to(to),
     min_length=12,
     max_length=256, 
     num_beams=5, 
@@ -440,7 +440,7 @@ def letter(input : str):
   )
 
   sample_outputs = letter_model.generate(
-    input_ids, #.to(to)
+    input_ids.to(to),
     do_sample=True, 
     min_length=12,
     max_length=256, 
@@ -471,7 +471,7 @@ def summary(param : Param):
   input_ids = [summary_token.bos_token_id] + raw_input_ids + [summary_token.eos_token_id]
 
   #summary_ids = model.generate(torch.tensor([input_ids]))
-  summary_ids = summary_model.generate(torch.tensor([input_ids]),  min_length=64, num_beams=4,  max_length=512,  eos_token_id=1) #.to(to)
+  summary_ids = summary_model.generate(torch.tensor([input_ids]),  min_length=64, num_beams=4,  max_length=512,  eos_token_id=1).to(to)
   output = summary_token.decode(summary_ids.squeeze().tolist(), skip_special_tokens=True)
   return { "result" : True, "data" : output }
 
@@ -531,7 +531,7 @@ def emotion(sentence : str):
               results.append({ "label" : emo_model.config.id2label[idx], "score" : s.item()})
   """
   results = []
-  inputs = emo_token(sentence,return_tensors="pt") #.to(to)
+  inputs = emo_token(sentence,return_tensors="pt").to(to)
   outputs = emo_model(**inputs)
   scores =  1 / (1 + torch.exp(-outputs[0]))  # Sigmoid
   threshold = .3
@@ -547,7 +547,7 @@ def emotion(sentence : str):
   description="")
 def dialect(sentence : str):
   results = []
-  inputs = dialect_token(sentence,return_tensors="pt") #.to(to)
+  inputs = dialect_token(sentence,return_tensors="pt").to(to)
   outputs = dialect_model(**inputs)
   scores =  1 / (1 + torch.exp(-outputs[0]))  # Sigmoid
   threshold = .3
@@ -563,7 +563,7 @@ def dialect(sentence : str):
   description="진술,충고,주장,질문,부탁,반박,감사,사과,부정,반응,약속,일반,명령,긍정,거절,위협,인사,위임")
 def act(sentence : str):
   results = []
-  inputs = act_token(sentence,return_tensors="pt")#.to(to)
+  inputs = act_token(sentence,return_tensors="pt").to(to)
   outputs = act_model(**inputs)
   scores =  1 / (1 + torch.exp(-outputs[0]))  # Sigmoid
   threshold = .3
@@ -604,7 +604,7 @@ def wellness(sentence : str):
 def ethic(sentence : str):
   #data = hate_func(sentence)
   results = []
-  inputs = hate_token(sentence,return_tensors="pt") #.to(to)
+  inputs = hate_token(sentence,return_tensors="pt").to(to)
   outputs = hate_model(**inputs)
   scores =  1 / (1 + torch.exp(-outputs[0]))  # Sigmoid
   threshold = .3
@@ -621,7 +621,7 @@ def correct(sentence : str):
   input_ids = tocorrect_token.encode(sentence)
   input_ids = torch.tensor(input_ids)
   input_ids = input_ids.unsqueeze(0)
-  output = tocorrect_model.generate(input_ids, eos_token_id=1, max_length=128, num_beams=5) #.to(to)
+  output = tocorrect_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5)#.to(to)
   output = tocorrect_token.decode(output[0], skip_special_tokens=True)
 
   return { "result" : True, "data" : output }
@@ -713,7 +713,7 @@ def todialect(input : str, type='JJ'):
   encoded = todialect_token.encode(f"<t>{type}</t>{input}")
   input_ids = torch.tensor(encoded)
   input_ids = input_ids.unsqueeze(0)
-  output = todialect_model.generate(input_ids, eos_token_id=1, max_length=128, num_beams=5) #.to(to)
+  output = todialect_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
   output = todialect_token.decode(output[0], skip_special_tokens=True)
 
   return { "result" : True, "data" : output }
@@ -723,7 +723,7 @@ def tostandard(input : str):
   encoded = tostandard_token.encode(f"<t>{type}</t>{input}")
   input_ids = torch.tensor(encoded)
   input_ids = input_ids.unsqueeze(0)
-  output = tostandard_model.generate(input_ids, eos_token_id=1, max_length=128, num_beams=5)
+  output = tostandard_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5)
   output = tostandard_token.decode(output[0], skip_special_tokens=True)
 
   return { "result" : True, "data" : output }
@@ -736,19 +736,19 @@ def tostyle(sentence : str, style="polite"):
     input_ids = toformal_token.encode(sentence)
     input_ids = torch.tensor(input_ids)
     input_ids = input_ids.unsqueeze(0)
-    output = toformal_model.generate(input_ids, eos_token_id=1, max_length=128, num_beams=5) #.to(to)
+    output = toformal_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
     output = toformal_token.decode(output[0], skip_special_tokens=True)
   elif style == "informal":
     input_ids = toinformal_token.encode(sentence)
     input_ids = torch.tensor(input_ids)
     input_ids = input_ids.unsqueeze(0)
-    output = toinformal_model.generate(input_ids, eos_token_id=1, max_length=128, num_beams=5) #.to(to)
+    output = toinformal_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
     output = toinformal_token.decode(output[0], skip_special_tokens=True)
   else:
     input_ids = topolite_token.encode(sentence)
     input_ids = torch.tensor(input_ids)
     input_ids = input_ids.unsqueeze(0)
-    output = topolite_model.generate(input_ids, eos_token_id=1, max_length=128, num_beams=5) #.to(to)
+    output = topolite_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
     output = topolite_token.decode(output[0], skip_special_tokens=True)
 
   return { "result" : True, "data" : output }
