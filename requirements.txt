@@ -6,3 +6,5 @@ pydantic==1.10.4
 #fasttext-langdetect
 pillow
 py3langid
+bs4
+googlesearch-python
