@@ -32,7 +32,7 @@ from huggingface_hub import hf_hub_download
 #from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 from googlesearch import search
-
+from transformers import ElectraTokenizer, ElectraForQuestionAnswering, pipeline 
 # Download and install Argos Translate package
 """
 argostranslate.package.update_package_index()
