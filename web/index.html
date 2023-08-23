@@ -1,0 +1,49 @@
+<html>
+	<head>
+		<title>hello world</title>
+	</head>
+	<body>
+		<input id='input' type='text' placeholder="input here" />
+		<button onclick='run()'>send</button>
+		<textarea id='output' rows="30" cols="80"></textarea>
+		<script>
+
+			const td = new TextDecoder()
+
+
+			async function readAllChunks(readableStream) {
+			  const reader = readableStream.getReader();
+			  const chunks = [];
+			  
+
+			  let done, value, result;
+			  while (!done) {
+			    ({ value, done } = await reader.read());
+			    if (done) {
+			      console.log(value)
+			      //return chunks;
+			      return chunks.join('')
+			    }
+
+		    	//let text =  document.querySelector('#output').value
+		    	result = td.decode(value)
+				chunks.push(result)
+				document.querySelector('#output').value =  chunks.join('')
+			  }
+			}
+
+			
+
+			async function run(){
+				const prompt = document.querySelector('#input').value
+				//alert(prompt)
+				const response = await fetch(`/v1/chat?prompt=${prompt}`);
+
+				const result = await readAllChunks(response.body)
+
+				console.log('res',result)
+			}
+
+		</script>
+	</body>
+</html>
