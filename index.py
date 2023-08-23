@@ -12,7 +12,7 @@ import requests
 import re
 
 #from diffusers import StableDiffusionPipeline
-  
+from konlpy.tag import Mecab   
 import json
 import torch
 import torch.nn as nn
@@ -50,6 +50,10 @@ import hashlib
 import os
 import json
 from  typing import List, Optional
+tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
+model = ElectraForQuestionAnswering.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
+model = pipeline("question-answering", tokenizer=tokenizer, model=model, device=0) 
+mecab = Mecab() 
 
 class Param(BaseModel):
   prompt : str
@@ -247,6 +251,39 @@ from serverinfo import si
 @app.get("/monitor")
 def monitor():
 	return si.getAll()
+
+@app.get("/qa") 
+def qa(question : str, context : str): 
+    manager = Manager()
+
+    return_result = manager.dict()
+    # as the inference is failing 
+    p = Process(target = inference,args=(question, answer,return_result,))
+    p.start()
+    p.join()
+    # print(return_result)
+    result = return_result['all_tags']
+    print(result)
+    #print(result) 
+    answer = result["answer"] 
+    list = mecab.pos(result["answer"]) 
+    print(list) 
+    for word in list: 
+        print(word[1]) 
+        #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
+        #if word[1].startswith('J'):
+        if answer.endswith('의'):
+            answer = answer.replace('의','')
+        answer = answer.replace('이다','')
+        answer = answer.replace('라는','')
+        if word[1].startswith('J') and word[0] != "링": 
+            answer = answer.replace(word[0],"")
+        if answer.find('(') > -1 and answer.find(')') < 0:
+            answer = answer + ")"
+        #if answer.find(''  
+    result["answer"] = answer 
+    print(result)
+    return result 
 
 @app.get("/v1/language", summary="어느 언어인지 분석합니다.")
 def language(input : str):
