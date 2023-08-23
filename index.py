@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from PIL import Image
 from torch import autocast
 from fastapi.middleware.cors import CORSMiddleware
-from ftlangdetect import detect
+#from ftlangdetect import detect
 import requests
 import re
 
@@ -301,9 +301,9 @@ def qa(query : Query):
     result["answer"] = answer 
     return result 
 
-@app.get("/v1/language", summary="어느 언어인지 분석합니다.")
-def language(input : str):
-  return { "result" : True, "data" : detect(input)['lang'] }
+#@app.get("/v1/language", summary="어느 언어인지 분석합니다.")
+#def language(input : str):
+#  return { "result" : True, "data" : detect(input)['lang'] }
 
 
 @app.get("/v2/dialog", summary="BART 기반의 자유 대화를 수행합니다. (좀더 형식적이지만 이해가능, 사투리나 어투 변환 내장)",
