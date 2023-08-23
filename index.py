@@ -13,7 +13,10 @@ import requests
 import re
 import py3langid as langid
 #from diffusers import StableDiffusionPipeline
-from eunjeon import Mecab   
+try:
+  from konlpy.tag import Mecab
+except:
+  from eunjeon import Mecab   
 import json
 import torch
 import torch.nn as nn
