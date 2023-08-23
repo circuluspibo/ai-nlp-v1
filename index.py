@@ -13,7 +13,8 @@ import requests
 import re
 import py3langid as langid
 #from diffusers import StableDiffusionPipeline
-from konlpy.tag import Mecab   
+from konlpy.tag import Okt
+okt = Okt()
 import json
 import torch
 import torch.nn as nn
@@ -54,7 +55,7 @@ from  typing import List, Optional
 tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
 model = ElectraForQuestionAnswering.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
 model = pipeline("question-answering", tokenizer=tokenizer, model=model, device=0) 
-mecab = Mecab() 
+#mecab = Mecab() 
 
 class Query(BaseModel):
   q : str
@@ -276,27 +277,19 @@ def qa(query : Query):
         answer = answer.replace("의","")       
     answer = re.sub(pattern=pattern, repl='', string=answer )
 
-    list = mecab.pos(result["answer"]) 
+    list = okt.pos(result["answer"]) 
     print(list) 
     for word in list: 
         print(word[1]) 
-        #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
-        #if word[1].startswith('J'):
-        #if answer.endswith('의'):
-        #    answer = answer.replace('의','')
-        #answer = answer.replace('이다','')
-        #answer = answer.replace('라는','')
-        if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
+        #if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
+        if word[1].startswith('Josa'): 
             answer = answer.replace(word[0],"")
-        if word[1].startswith('VCP'): 
+        if word[1].startswith('Verb'): 
             answer = answer.replace(word[0],"") 
-        if word[1].startswith('SS'): 
+        if word[1].startswith('Eomi'): 
             answer = answer.replace(word[0],"")   
-        if word[1].endswith('F'): 
-            answer = answer.replace(word[0],"")                        
-        #if answer.find('(') > -1 and answer.find(')') < 0:
-        #    answer = answer + ")"
-        #if answer.find(''  
+        #if word[1].endswith('F'): 
+        #    answer = answer.replace(word[0],"")                          
     print(result)
     
     result["answer"] = answer 

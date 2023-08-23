@@ -8,4 +8,4 @@ pillow
 py3langid
 bs4
 googlesearch-python
-mecab-python
+#mecab-python
