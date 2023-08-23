@@ -260,8 +260,8 @@ def monitor():
 
 @app.post("/qa") 
 def qa(query : Query): 
-    question = query['q']
-    context = query['c']
+    question = query.q
+    context = query.c
     result = model({ "question" : question,  "context" : context }) 
     #print(result) 
     answer = result["answer"] 
