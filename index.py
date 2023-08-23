@@ -13,15 +13,15 @@ import requests
 import re
 import py3langid as langid
 #from diffusers import StableDiffusionPipeline
-try:
-  from konlpy.tag import Mecab
-except:
-  from eunjeon import Mecab   
+
+#  from konlpy.tag import Mecab
+
+from eunjeon import Mecab   
 import json
 import torch
 import torch.nn as nn
 import numpy as np
-#from konlpy.tag import Mecab
+
 #from module.DialogService import predict_dialog
 from inference import senti_func, senti_model, senti_token, polite_func,polite_model,polite_token, grammer_func, grammer_model, grammer_token, ner_func,ner_model,ner_token,emo_model,emo_token,dialect_model,dialect_token,summary_model,summary_token,hate_model,hate_token,copywrite_model,copywrite_token,act_model,act_token,well_config,well_model,well_token,chat_model,chat_token,tocorrect_model,tocorrect_token,todialect_model,todialect_token,toformal_model,toformal_token,toinformal_model,toinformal_token,topolite_model,topolite_token,tostandard_model,tostandard_token,letter_token,letter_model, pipe_en2ko,pipe_ko2en
 from care.koelectra import koelectra_input
