@@ -474,7 +474,7 @@ def summary(param : Param):
   input_ids = [summary_token.bos_token_id] + raw_input_ids + [summary_token.eos_token_id]
 
   #summary_ids = model.generate(torch.tensor([input_ids]))
-  summary_ids = summary_model.generate(torch.tensor([input_ids]),  min_length=64, num_beams=4,  max_length=512,  eos_token_id=1).to(to)
+  summary_ids = summary_model.generate(torch.tensor([input_ids]).to(to),  min_length=64, num_beams=4,  max_length=512,  eos_token_id=1)
   output = summary_token.decode(summary_ids.squeeze().tolist(), skip_special_tokens=True)
   return { "result" : True, "data" : output }
 
