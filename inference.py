@@ -13,7 +13,7 @@ to = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #qna_token = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
 #qna_model = ElectraForQuestionAnswering.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
 qa = "monologg/koelectra-base-v3-finetuned-korquad"
-qa_model = pipeline("question-answering", tokenizer=qa, model=qa, device=0) 
+qa_func = pipeline("question-answering", tokenizer=qa, model=qa, device=0) 
 
 print("qa model loaded")
 
