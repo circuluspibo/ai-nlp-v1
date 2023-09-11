@@ -16,17 +16,21 @@ qa_model = pipeline("question-answering", tokenizer="monologg/koelectra-base-v3-
 
 print("qa model loaded")
 
-senti_token = AutoTokenizer.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
-senti_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
+#senti_token = AutoTokenizer.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
+#senti_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
+senti = "circulus/koelectra-sentiment-v1"
 senti_func = pipeline("text-classification", tokenizer=senti_token, model=senti_model, device=-1) 
 
-polite_token = AutoTokenizer.from_pretrained("circulus/koelectra-polite-v1") # ,torch_dtype=torch.float16)
-polite_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-polite-v1") #,torch_dtype=torch.float16)
-polite_func = pipeline("text-classification", tokenizer=polite_token, model=polite_model, device=-1) 
+#polite_token = AutoTokenizer.from_pretrained("circulus/koelectra-polite-v1") # ,torch_dtype=torch.float16)
+#polite_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-polite-v1") #,torch_dtype=torch.float16)
 
-grammer_token = AutoTokenizer.from_pretrained("circulus/koelectra-polite-v1") #,torch_dtype=torch.float16)
-grammer_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-polite-v1") #,torch_dtype=torch.float16)
-grammer_func = pipeline("text-classification", tokenizer=grammer_token, model=grammer_model, device=-1) 
+polite = "circulus/koelectra-polite-v1"
+polite_func = pipeline("text-classification", tokenizer=polite, model=polite, device=-1) 
+
+#grammer_token = AutoTokenizer.from_pretrained("circulus/koelectra-polite-v1") #,torch_dtype=torch.float16)
+#grammer_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-polite-v1") #,torch_dtype=torch.float16)
+grammer = "circulus/koelectra-polite-v1"
+grammer_func = pipeline("text-classification", tokenizer=grammer, model=grammer, device=-1) 
 
 #emo_token = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-goemotions")
 #emo_model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-v3-goemotions")
@@ -86,9 +90,10 @@ tocorrect_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-corre
 tocorrect_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-correct-v1')#,torch_dtype=torch.float16)
 tocorrect_model.to(to)
 
-ner_token = AutoTokenizer.from_pretrained("monologg/koelectra-base-v3-naver-ner") #,torch_dtype=torch.float16)
-ner_model = AutoModelForTokenClassification.from_pretrained("monologg/koelectra-base-v3-naver-ner") #,torch_dtype=torch.float16)
-ner_func = pipeline("ner", tokenizer=ner_token, model=ner_model, device=-1)
+ner = "monologg/koelectra-base-v3-naver-ner"
+#ner_token = AutoTokenizer.from_pretrained("monologg/koelectra-base-v3-naver-ner") #,torch_dtype=torch.float16)
+#ner_model = AutoModelForTokenClassification.from_pretrained("monologg/koelectra-base-v3-naver-ner") #,torch_dtype=torch.float16)
+ner_func = pipeline("ner", tokenizer=ner, model=ner, device=-1)
 
 copywrite_token = PreTrainedTokenizerFast.from_pretrained("circulus/kobart-copywrite-v1")#,torch_dtype=torch.float16)
 copywrite_model = BartForConditionalGeneration.from_pretrained("circulus/kobart-copywrite-v1")#,torch_dtype=torch.float16)
