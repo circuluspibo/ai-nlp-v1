@@ -262,6 +262,7 @@ def monitor():
 
 @app.post("/qa") 
 def qa(query : Query): 
+    print(query)
     question = query.q
     context = query.c
     result = qa_model({ "question" : question,  "context" : context }) 
