@@ -267,7 +267,7 @@ def qa(query : Query):
     question = query.q
     context = query.c
     result = model({ "question" : question,  "context" : context }) 
-    #print(result) 
+    print(result) 
     answer = result["answer"] 
 
     if answer.find('(') > -1 and answer.find(')') < 0:
@@ -279,9 +279,10 @@ def qa(query : Query):
         answer = answer.replace("의","")       
     answer = re.sub(pattern=pattern, repl='', string=answer )
 
+	
     list = mecab.pos(result["answer"]) 
     #print(list)
-	
+    
     for word in list: 
         print(word[1]) 
         #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
