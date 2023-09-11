@@ -40,9 +40,9 @@ emo_token = ElectraTokenizer.from_pretrained("circulus/koelectra-emotion-v1",tor
 emo_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-emotion-v1",torch_dtype=torch.float16)
 emo_model.to(to)
 
-dialect_token = ElectraTokenizer.from_pretrained("circulus/koelectra-dialect-v1",torch_dtype=torch.float16)
-dialect_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-dialect-v1",torch_dtype=torch.float16)
-dialect_model.to(to)
+dialect_token = ElectraTokenizer.from_pretrained("circulus/koelectra-dialect-v1") # ,torch_dtype=torch.float16
+dialect_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-dialect-v1") #$ ,torch_dtype=torch.float16
+#dialect_model.to(to)
 
 #hate_token = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-hate-speech")
 #hate_model = ElectraForSequenceClassification.from_pretrained("monologg/koelectra-base-v3-hate-speech")
@@ -52,8 +52,8 @@ hate_token = ElectraTokenizer.from_pretrained("circulus/koelectra-ethics-v1",tor
 hate_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-ethics-v1",torch_dtype=torch.float16)
 hate_model.to(to)
 
-act_token = ElectraTokenizer.from_pretrained("circulus/koelectra-act-v1",torch_dtype=torch.float16)
-act_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-act-v1",torch_dtype=torch.float16)
+act_token = ElectraTokenizer.from_pretrained("circulus/koelectra-act-v1") #,torch_dtype=torch.float16
+act_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-act-v1")# torch_dtype=torch.float16
 #act_model.to(to)
 
 well_token = ElectraTokenizer.from_pretrained("circulus/koelectra-wellness-v1") #,torch_dtype=torch.float16)

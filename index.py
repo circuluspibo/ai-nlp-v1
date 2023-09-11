@@ -520,7 +520,7 @@ def emotion(sentence : str):
   description="")
 def dialect(sentence : str):
   results = []
-  inputs = dialect_token(sentence,return_tensors="pt").to(to)
+  inputs = dialect_token(sentence,return_tensors="pt") #.to(to)
   outputs = dialect_model(**inputs)
   scores =  1 / (1 + torch.exp(-outputs[0]))  # Sigmoid
   threshold = .3
@@ -680,6 +680,7 @@ def tostyle(sentence : str, style="polite"):
   return { "result" : True, "data" : output }
 
 @app.post("/qa") 
+@app.post("/v1/qa") 
 def qa(query : Query): 
   question = query.q
   context = query.c
