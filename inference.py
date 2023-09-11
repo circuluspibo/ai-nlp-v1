@@ -1,15 +1,13 @@
-from transformers import PreTrainedTokenizerFast
-from transformers import BertTokenizer, BartForConditionalGeneration
-from transformers import AutoTokenizer, AutoModelForTokenClassification, AutoModelForSequenceClassification, TextClassificationPipeline
-from transformers import ElectraTokenizer, ElectraForSequenceClassification, pipeline,AutoModelForSeq2SeqLM, ElectraForQuestionAnswering
+from transformers import PreTrainedTokenizerFast, BartForConditionalGeneration
+from transformers import AutoTokenizer, AutoModelForTokenClassification, AutoModelForSequenceClassification
+from transformers import ElectraTokenizer, pipeline,AutoModelForSeq2SeqLM, ElectraForQuestionAnswering
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, ElectraConfig
 from emotion.multilabel_pipeline import MultiLabelPipeline
-from emotion.model import ElectraForMultiLabelClassification, BertForMultiLabelClassification
-from care.koelectra import koelectra_input, koElectraForSequenceClassification
+from emotion.model import ElectraForMultiLabelClassification
+from care.koelectra import koElectraForSequenceClassification
 
-from transformers import PreTrainedTokenizerFast, BartModel, VisionEncoderDecoderModel, ViTFeatureExtractor, PreTrainedTokenizerFast
+from transformers import PreTrainedTokenizerFast, PreTrainedTokenizerFast
 import torch
-
 
 print("loading...")
 to = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

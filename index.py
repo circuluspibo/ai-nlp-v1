@@ -26,7 +26,7 @@ import numpy as np
 #from module.DialogService import predict_dialog
 from inference import senti_func, senti_model, senti_token, polite_func,polite_model,polite_token, grammer_func, grammer_model, grammer_token, ner_func,ner_model,ner_token,emo_model,emo_token,dialect_model,dialect_token,summary_model,summary_token,hate_model,hate_token,copywrite_model,copywrite_token,act_model,act_token,well_config,well_model,well_token,chat_model,chat_token,tocorrect_model,tocorrect_token,todialect_model,todialect_token,toformal_model,toformal_token,toinformal_model,toinformal_token,topolite_model,topolite_token,tostandard_model,tostandard_token,letter_token,letter_model, pipe_en2ko,pipe_ko2en,qa_model
 
-#import openai
+from care.koelectra import koelectra_input
 from bs4 import BeautifulSoup
 from threading import Event, Thread
 from fastapi.responses import StreamingResponse
@@ -37,20 +37,6 @@ from huggingface_hub import hf_hub_download
 #from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 from googlesearch import search
-
-# Download and install Argos Translate package
-"""
-argostranslate.package.update_package_index()
-available_packages = argostranslate.package.get_available_packages()
-package_to_install = next(
-    filter(
-        lambda x: x.from_code == "en" and x.to_code == "ko", available_packages
-    )
-)
-argostranslate.package.install_from_path(package_to_install.download())
-"""
-#openai.api_key = "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"
-
 import hashlib
 import os
 import json
@@ -78,19 +64,6 @@ class Chat(BaseModel):
 pattern = r'\([^])]*\)'
 
 to = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-PROMPT_DICT = {
-    "prompt_input": (
-        "Below is an instruction that describes a task, paired with an input that provides further context.\n"
-        "아래는 작업을 설명하는 명령어와 추가적 맥락을 제공하는 입력이 짝을 이루는 예제입니다.\n\n"
-        "Write a response that appropriately completes the request.\n요청을 적절히 완료하는 응답을 작성하세요.\n\n"
-        "### Instruction(명령어):\n{instruction}\n\n### Input(입력):\n{input}\n\n### Response(응답):"
-    ),
-    "prompt_no_input": (
-        "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Response:"
-    ),
-}
 
 """
 EMO_MAP = [
@@ -237,6 +210,50 @@ def translate(sentence):
 def translate2(sentence):
   return pipe_en2ko(sentence, num_return_sequences=1, max_length=1024)[0]['generated_text']
 
+def stream_en2ko(prompts):
+  prompts = prompts.split('\n') #[:-1] for xgen patch
+  print(prompts)
+  #prompts = prompts.split('\n')
+  length = len(prompts)
+  for idx, prompt in enumerate(prompts):
+    if len(prompt) > 1:
+      output = pipe_en2ko(prompt, num_return_sequences=1, max_length=1024)[0]
+      result = output['generated_text']
+#      print(idx, length)      
+#      print(result)
+
+      if idx < length - 1:
+        yield result + "</br>"
+      else:
+        yield result
+    elif idx < length - 1:
+      yield "</br>"      
+#      yield result + "</br>"
+#    else:
+#      yield "</br>"      
+
+
+def stream_ko2en(prompts):
+  prompts = prompts.split('\n') #[:-1] for xgen
+  length = len(prompts)
+
+
+  for idx, prompt in enumerate(prompts):
+    if len(prompt) > 1:
+      output = pipe_ko2en(prompt, num_return_sequences=1, max_length=1024)[0]
+#      print(output)
+      result = output['generated_text']
+#      print(result)
+#      print(idx, length)
+      #yield result + "</br>"
+
+      if idx < length - 1:
+        yield result + "</br>"
+      else:
+        yield result
+    elif idx < length - 1:
+      yield "</br>"
+
 
 def load_category():
   root_path = '.'
@@ -260,56 +277,10 @@ def main():
 def monitor():
 	return si.getAll()
 
-@app.post("/qa") 
-def qa(query : Query): 
-  print(query)
-  question = query.q
-  context = query.c
-  result = qa_model({ "question" : question,  "context" : context }) 
-  print(result) 
-  answer = result["answer"] 
-
-  if answer.find('(') > -1 and answer.find(')') < 0:
-      if(answer.startswith('(')):
-          answer.replace("(","")
-      else:
-          answer = answer + ")"
-  if answer.endswith('의'): 
-      answer = answer.replace("의","")       
-  answer = re.sub(pattern=pattern, repl='', string=answer )
-
-  list = mecab.pos(result["answer"]) 
-  #print(list)
-  
-  for word in list: 
-      print(word[1]) 
-      #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
-      #if word[1].startswith('J'):
-      #if answer.endswith('의'):
-      #    answer = answer.replace('의','')
-      #answer = answer.replace('이다','')
-      #answer = answer.replace('라는','')
-      if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
-          answer = answer.replace(word[0],"")
-      if word[1].startswith('VCP'): 
-          answer = answer.replace(word[0],"") 
-      if word[1].startswith('SS'): 
-          answer = answer.replace(word[0],"")   
-      if word[1].endswith('F'): 
-          answer = answer.replace(word[0],"")                        
-      #if answer.find('(') > -1 and answer.find(')') < 0:
-      #    answer = answer + ")"
-      #if answer.find(''  
-  print(result)
-  
-  result["answer"] = answer 
-  return result 
-
 @app.get("/v1/language", summary="어느 언어인지 분석합니다.")
 def language(input : str):
   return { "result" : True, "data" : langid.classify(input)[0] }
   #return { "result" : True, "data" : detect(input)['lang'] }
-
 
 @app.get("/v2/dialog", summary="BART 기반의 자유 대화를 수행합니다. (좀더 형식적이지만 이해가능, 사투리나 어투 변환 내장)",
   description="type=PL(공손)/IF(반말)/JR(전라)/GS(경상)/JJ(제주)/GW(강원)/CC(충청)")
@@ -602,8 +573,7 @@ def wellness(sentence : str):
   max_index_value = softmax_logit[torch.argmax(softmax_logit)].item()
   return { "result" : True, "data" : { "cat" : category[max_index], "index" : max_index, "value" : max_index_value} } 
 
-@app.get("/v1/ethic", summary="입력문장에 윤리적 문제가 없는지 점검합니다.",
-  description="비난,증오,성적,보통,욕설,폭력,범죄,차별") # old is hate
+@app.get("/v1/ethic", summary="입력문장에 윤리적 문제가 없는지 점검합니다.", description="비난,증오,성적,보통,욕설,폭력,범죄,차별") # old is hate
 def ethic(sentence : str):
   #data = hate_func(sentence)
   results = []
@@ -644,27 +614,6 @@ def ko2en(param : Param):
   return { "result" : True, "data" : output['generated_text'] }
   #return { "result" : True, "data" : output }
 
-def stream_ko2en(prompts):
-  prompts = prompts.split('\n') #[:-1] for xgen
-  length = len(prompts)
-
-
-  for idx, prompt in enumerate(prompts):
-    if len(prompt) > 1:
-      output = pipe_ko2en(prompt, num_return_sequences=1, max_length=1024)[0]
-#      print(output)
-      result = output['generated_text']
-#      print(result)
-#      print(idx, length)
-      #yield result + "</br>"
-
-      if idx < length - 1:
-        yield result + "</br>"
-      else:
-        yield result
-    elif idx < length - 1:
-      yield "</br>"
-
 @app.post("/v2/ko2en", summary="한국어를 영어로 번역합니다.(streaming)")
 def ko2en2(param : Param):
   return StreamingResponse(stream_ko2en(param.prompt))  
@@ -682,30 +631,6 @@ def en2ko(param : Param):
   output = en2ko_token.decode(output[0], skip_special_tokens=True)
   """
   return { "result" : True, "data" : output['generated_text'] }
-
-
-def stream_en2ko(prompts):
-  prompts = prompts.split('\n') #[:-1] for xgen patch
-  print(prompts)
-  #prompts = prompts.split('\n')
-  length = len(prompts)
-  for idx, prompt in enumerate(prompts):
-    if len(prompt) > 1:
-      output = pipe_en2ko(prompt, num_return_sequences=1, max_length=1024)[0]
-      result = output['generated_text']
-#      print(idx, length)      
-#      print(result)
-
-      if idx < length - 1:
-        yield result + "</br>"
-      else:
-        yield result
-    elif idx < length - 1:
-      yield "</br>"      
-#      yield result + "</br>"
-#    else:
-#      yield "</br>"      
-
 
 @app.post("/v2/en2ko", summary="영어를 한국어로 번역합니다. (streaming)")
 def en2ko2(param : Param):
@@ -731,8 +656,7 @@ def tostandard(input : str):
 
   return { "result" : True, "data" : output }
 
-@app.get("/v1/tostyle", summary="입력한 문장의 어투를 전환합니다. (반말/존대말/존칭어)",
-  description="style=polite/formal/informal")
+@app.get("/v1/tostyle", summary="입력한 문장의 어투를 전환합니다. (반말/존대말/존칭어)",  description="style=polite/formal/informal")
 def tostyle(sentence : str, style="polite"):
 
   if style == "formal":
@@ -756,6 +680,51 @@ def tostyle(sentence : str, style="polite"):
 
   return { "result" : True, "data" : output }
 
+@app.post("/qa") 
+def qa(query : Query): 
+  question = query.q
+  context = query.c
+  print(query)
+  result = qa_model({ "question" : question,  "context" : context }) 
+  print(result) 
+  answer = result["answer"] 
+
+  if answer.find('(') > -1 and answer.find(')') < 0:
+    if(answer.startswith('(')):
+      answer.replace("(","")
+    else:
+      answer = answer + ")"
+  if answer.endswith('의'): 
+    answer = answer.replace("의","")       
+  answer = re.sub(pattern=pattern, repl='', string=answer )
+
+  list = mecab.pos(result["answer"]) 
+  #print(list)
+  
+  for word in list: 
+    print(word[1]) 
+    #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
+    #if word[1].startswith('J'):
+    #if answer.endswith('의'):
+    #    answer = answer.replace('의','')
+    #answer = answer.replace('이다','')
+    #answer = answer.replace('라는','')
+    if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
+      answer = answer.replace(word[0],"")
+    if word[1].startswith('VCP'): 
+      answer = answer.replace(word[0],"") 
+    if word[1].startswith('SS'): 
+      answer = answer.replace(word[0],"")   
+    if word[1].endswith('F'): 
+      answer = answer.replace(word[0],"")                        
+    #if answer.find('(') > -1 and answer.find(')') < 0:
+    #    answer = answer + ")"
+    #if answer.find(''  
+  print(result)
+  
+  result["answer"] = answer 
+  return result 
+
 ENV = "OPS"
 
 conf = json.load(open('config.json', 'r'))
@@ -766,4 +735,3 @@ print("CIRCULUS_ENV: " + ENV)
 
 if __name__ == "__main__":
   uvicorn.run("index:app",host=CONF["HOST"],port=CONF["PORT"])
-  #uvicorn.run("index:app", host="0.0.0.0", port=cfg["LOCAL_PORT"], log_level="debug")
