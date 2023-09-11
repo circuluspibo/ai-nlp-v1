@@ -10,6 +10,8 @@ from care.koelectra import koelectra_input, koElectraForSequenceClassification
 from transformers import PreTrainedTokenizerFast, BartModel, VisionEncoderDecoderModel, ViTFeatureExtractor, PreTrainedTokenizerFast
 import torch
 
+
+print("loading...")
 to = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 qna_token = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
@@ -118,3 +120,4 @@ en2ko = 'circulus/canvers-en2ko-v1'
 pipe_en2ko = pipeline("text2text-generation", model=en2ko, tokenizer=en2ko, device=0)
 #pipe_en2ko = pipeline("text2text-generation", model=en2ko_model, tokenizer=en2ko_token, device=0)
 
+print("loading ok!")
