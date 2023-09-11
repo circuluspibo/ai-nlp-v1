@@ -14,6 +14,8 @@ to = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #qna_model = ElectraForQuestionAnswering.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
 qa_model = pipeline("question-answering", tokenizer="monologg/koelectra-base-v3-finetuned-korquad", model="monologg/koelectra-base-v3-finetuned-korquad", device=0) 
 
+print("qa model loaded")
+
 senti_token = AutoTokenizer.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
 senti_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
 senti_func = pipeline("text-classification", tokenizer=senti_token, model=senti_model, device=-1) 
