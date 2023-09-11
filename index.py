@@ -537,7 +537,7 @@ def dialect(sentence : str):
   description="진술,충고,주장,질문,부탁,반박,감사,사과,부정,반응,약속,일반,명령,긍정,거절,위협,인사,위임")
 def act(sentence : str):
   results = []
-  inputs = act_token(sentence,return_tensors="pt").to(to)
+  inputs = act_token(sentence,return_tensors="pt") #.to(to)
   outputs = act_model(**inputs)
   scores =  1 / (1 + torch.exp(-outputs[0]))  # Sigmoid
   threshold = .3

@@ -1,24 +1,22 @@
-from transformers import PreTrainedTokenizerFast, BartForConditionalGeneration
+from transformers import PreTrainedTokenizerFast, PreTrainedTokenizerFast, BartForConditionalGeneration
 from transformers import AutoTokenizer, AutoModelForTokenClassification, AutoModelForSequenceClassification
 from transformers import ElectraTokenizer, pipeline,AutoModelForSeq2SeqLM, ElectraForQuestionAnswering
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, ElectraConfig
 from emotion.multilabel_pipeline import MultiLabelPipeline
 from emotion.model import ElectraForMultiLabelClassification
 from care.koelectra import koElectraForSequenceClassification
-
-from transformers import PreTrainedTokenizerFast, PreTrainedTokenizerFast
 import torch
 
 print("loading...")
 to = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-qna_token = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
-qna_model = ElectraForQuestionAnswering.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
-qa_model = pipeline("question-answering", tokenizer=qna_token, model=qna_model, device=0) 
+#qna_token = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
+#qna_model = ElectraForQuestionAnswering.from_pretrained("monologg/koelectra-base-v3-finetuned-korquad") 
+qa_model = pipeline("question-answering", tokenizer="monologg/koelectra-base-v3-finetuned-korquad", model="monologg/koelectra-base-v3-finetuned-korquad", device=0) 
 
-senti_token = AutoTokenizer.from_pretrained("circulus/koelectra-sentiment-v1",torch_dtype=torch.float16)
-senti_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-sentiment-v1",torch_dtype=torch.float16)
-senti_func = pipeline("text-classification", tokenizer=senti_token, model=senti_model, device=0) 
+senti_token = AutoTokenizer.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
+senti_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-sentiment-v1") #torch_dtype=torch.float16
+senti_func = pipeline("text-classification", tokenizer=senti_token, model=senti_model, device=-1) 
 
 polite_token = AutoTokenizer.from_pretrained("circulus/koelectra-polite-v1") # ,torch_dtype=torch.float16)
 polite_model = AutoModelForSequenceClassification.from_pretrained("circulus/koelectra-polite-v1") #,torch_dtype=torch.float16)
@@ -49,7 +47,7 @@ hate_model.to(to)
 
 act_token = ElectraTokenizer.from_pretrained("circulus/koelectra-act-v1",torch_dtype=torch.float16)
 act_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-act-v1",torch_dtype=torch.float16)
-act_model.to(to)
+#act_model.to(to)
 
 well_token = ElectraTokenizer.from_pretrained("circulus/koelectra-wellness-v1") #,torch_dtype=torch.float16)
 well_config = ElectraConfig.from_pretrained("circulus/koelectra-wellness-v1")
