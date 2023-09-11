@@ -563,7 +563,7 @@ def ner(sentence : str):
 
 @app.get("/v1/wellness", summary="입력 문장으로 부터 마음 건강 상태를 확인합니다. (ex 우울, 경제, 자살 등)")
 def wellness(sentence : str):
-  data = koelectra_input(well_token,sentence, None ,512)#to cpu gpu select
+  data = koelectra_input(well_token,sentence, "cuda" ,512)#to cpu gpu select
   output = well_model(**data)
   logit = output
   softmax_logit = nn.Softmax(logit).dim
