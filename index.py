@@ -262,49 +262,48 @@ def monitor():
 
 @app.post("/qa") 
 def qa(query : Query): 
-    print(query)
-    question = query.q
-    context = query.c
-    result = qa_model({ "question" : question,  "context" : context }) 
-    print(result) 
-    answer = result["answer"] 
+  print(query)
+  question = query.q
+  context = query.c
+  result = qa_model({ "question" : question,  "context" : context }) 
+  print(result) 
+  answer = result["answer"] 
 
-    if answer.find('(') > -1 and answer.find(')') < 0:
-        if(answer.startswith('(')):
-            answer.replace("(","")
-        else:
-            answer = answer + ")"
-    if answer.endswith('의'): 
-        answer = answer.replace("의","")       
-    answer = re.sub(pattern=pattern, repl='', string=answer )
+  if answer.find('(') > -1 and answer.find(')') < 0:
+      if(answer.startswith('(')):
+          answer.replace("(","")
+      else:
+          answer = answer + ")"
+  if answer.endswith('의'): 
+      answer = answer.replace("의","")       
+  answer = re.sub(pattern=pattern, repl='', string=answer )
 
-	
-    list = mecab.pos(result["answer"]) 
-    #print(list)
-    
-    for word in list: 
-        print(word[1]) 
-        #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
-        #if word[1].startswith('J'):
-        #if answer.endswith('의'):
-        #    answer = answer.replace('의','')
-        #answer = answer.replace('이다','')
-        #answer = answer.replace('라는','')
-        if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
-            answer = answer.replace(word[0],"")
-        if word[1].startswith('VCP'): 
-            answer = answer.replace(word[0],"") 
-        if word[1].startswith('SS'): 
-            answer = answer.replace(word[0],"")   
-        if word[1].endswith('F'): 
-            answer = answer.replace(word[0],"")                        
-        #if answer.find('(') > -1 and answer.find(')') < 0:
-        #    answer = answer + ")"
-        #if answer.find(''  
-    print(result)
-    
-    result["answer"] = answer 
-    return result 
+  list = mecab.pos(result["answer"]) 
+  #print(list)
+  
+  for word in list: 
+      print(word[1]) 
+      #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
+      #if word[1].startswith('J'):
+      #if answer.endswith('의'):
+      #    answer = answer.replace('의','')
+      #answer = answer.replace('이다','')
+      #answer = answer.replace('라는','')
+      if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
+          answer = answer.replace(word[0],"")
+      if word[1].startswith('VCP'): 
+          answer = answer.replace(word[0],"") 
+      if word[1].startswith('SS'): 
+          answer = answer.replace(word[0],"")   
+      if word[1].endswith('F'): 
+          answer = answer.replace(word[0],"")                        
+      #if answer.find('(') > -1 and answer.find(')') < 0:
+      #    answer = answer + ")"
+      #if answer.find(''  
+  print(result)
+  
+  result["answer"] = answer 
+  return result 
 
 @app.get("/v1/language", summary="어느 언어인지 분석합니다.")
 def language(input : str):
