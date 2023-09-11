@@ -24,7 +24,9 @@ import torch.nn as nn
 import numpy as np
 
 #from module.DialogService import predict_dialog
-from inference import senti_func, polite_func, grammer_func, ner_func, emo_model,emo_token,dialect_model,dialect_token,summary_model,summary_token,hate_model,hate_token,copywrite_model,copywrite_token,act_model,act_token,well_config,well_model,well_token,chat_model,chat_token,tocorrect_model,tocorrect_token,todialect_model,todialect_token,toformal_model,toformal_token,toinformal_model,toinformal_token,topolite_model,topolite_token,tostandard_model,tostandard_token,letter_token,letter_model, pipe_en2ko,pipe_ko2en,qa_func
+#tocorrect_model,tocorrect_token,todialect_model,todialect_token,toformal_model,toformal_token,toinformal_model,toinformal_token,topolite_model,topolite_token,tostandard_model,tostandard_token,
+from inference import senti_func, polite_func, grammer_func, ner_func, emo_model,emo_token,dialect_model,dialect_token,summary_model,summary_token,hate_model,hate_token,copywrite_model,copywrite_token,act_model,act_token,well_config,well_model,well_token,chat_model,chat_token,letter_token,letter_model, pipe_en2ko,pipe_ko2en,qa_func
+from inference import tocorrect_func, todialect_func, toformal_func, toinformal_func, topolite_func, tostandard_func
 from care.koelectra import koelectra_input
 from bs4 import BeautifulSoup
 from threading import Event, Thread
@@ -516,9 +518,9 @@ def emotion(sentence : str):
         results.append({ "label" : EMO_MAP[idx], "score" : s.item()})  
   return { "result" : True, "data" : results }
 
-@app.get("/v1/dialect", summary="입력문장이 표준문장인지 지역사투리(충청,강원,전라,경상,제주)인지 확인합니다.",
-  description="")
+@app.get("/v1/dialect", summary="입력문장이 표준문장인지 지역사투리(충청,강원,전라,경상,제주)인지 확인합니다.",description="")
 def dialect(sentence : str):
+  
   results = []
   inputs = dialect_token(sentence,return_tensors="pt") #.to(to)
   outputs = dialect_model(**inputs)
@@ -532,8 +534,7 @@ def dialect(sentence : str):
         results.append({ "label" : DIALECT_MAP[idx], "score" : s.item()})  
   return { "result" : True, "data" : results }  
 
-@app.get("/v1/act", summary="문장의 의도를 파악합니다.",
-  description="진술,충고,주장,질문,부탁,반박,감사,사과,부정,반응,약속,일반,명령,긍정,거절,위협,인사,위임")
+@app.get("/v1/act", summary="문장의 의도를 파악합니다.",description="진술,충고,주장,질문,부탁,반박,감사,사과,부정,반응,약속,일반,명령,긍정,거절,위협,인사,위임")
 def act(sentence : str):
   results = []
   inputs = act_token(sentence,return_tensors="pt") #.to(to)
@@ -549,8 +550,7 @@ def act(sentence : str):
   return { "result" : True, "data" : results }
 
 
-@app.get("/v1/ner", summary="객체 인식(Named Entity Recognition) 을 수행합니다.",
-  description="인물(PER), 학문분야(FLD), 지명(LOC), 기타(POH), 날짜(DAT), 시간(TIM), 기간(DUR), 통화(MNY), 비율(PNT), 수량표현(NOH)")
+@app.get("/v1/ner", summary="객체 인식(Named Entity Recognition) 을 수행합니다.", description="인물(PER), 학문분야(FLD), 지명(LOC), 기타(POH), 날짜(DAT), 시간(TIM), 기간(DUR), 통화(MNY), 비율(PNT), 수량표현(NOH)")
 def ner(sentence : str):
   results = ner_func(sentence)
   result = {}
@@ -590,12 +590,14 @@ def ethic(sentence : str):
 
 @app.get("/v1/correct", summary="문장의 맞춤법 및 띄어쓰기를 적용해 줍니다.")
 def correct(sentence : str):
+  """
   input_ids = tocorrect_token.encode(sentence)
   input_ids = torch.tensor(input_ids)
   input_ids = input_ids.unsqueeze(0)
   output = tocorrect_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5)#.to(to)
   output = tocorrect_token.decode(output[0], skip_special_tokens=True)
-
+  """
+  output = tocorrect_func(sentence, num_return_sequences=1)[0]['generated_text']
   return { "result" : True, "data" : output }
 
 @app.post("/v1/ko2en", summary="한국어를 영어로 번역합니다.")
@@ -637,45 +639,59 @@ def en2ko2(param : Param):
 
 @app.get("/v2/todialect", summary="입력한 문장을 지역사투리로 전환합니다.")
 def todialect(input : str, type='JJ'):
+  """
   encoded = todialect_token.encode(f"<t>{type}</t>{input}")
   input_ids = torch.tensor(encoded)
   input_ids = input_ids.unsqueeze(0)
   output = todialect_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
   output = todialect_token.decode(output[0], skip_special_tokens=True)
+  """
+  output = todialect_func(f"<t>{type}</t>{input}", num_return_sequences=1)[0]['generated_text']
 
   return { "result" : True, "data" : output }
 
 @app.get("/v2/tostandard", summary="입력한 사투리 문장을 표준어로 전환합니다.") #.to(to)
 def tostandard(input : str):
+  """
   encoded = tostandard_token.encode(f"<t>{type}</t>{input}")
   input_ids = torch.tensor(encoded)
   input_ids = input_ids.unsqueeze(0)
   output = tostandard_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5)
   output = tostandard_token.decode(output[0], skip_special_tokens=True)
-
+  """
+  output = tostandard_func(f"<t>{type}</t>{input}", num_return_sequences=1)[0]['generated_text']
   return { "result" : True, "data" : output }
 
 @app.get("/v1/tostyle", summary="입력한 문장의 어투를 전환합니다. (반말/존대말/존칭어)",  description="style=polite/formal/informal")
 def tostyle(sentence : str, style="polite"):
 
   if style == "formal":
+    output = toformal_func(sentence, num_return_sequences=1)[0]['generated_text']
+    """
     input_ids = toformal_token.encode(sentence)
     input_ids = torch.tensor(input_ids)
     input_ids = input_ids.unsqueeze(0)
     output = toformal_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
     output = toformal_token.decode(output[0], skip_special_tokens=True)
+    """
   elif style == "informal":
+    output = toinformal_func(sentence, num_return_sequences=1)[0]['generated_text']
+    """
     input_ids = toinformal_token.encode(sentence)
     input_ids = torch.tensor(input_ids)
     input_ids = input_ids.unsqueeze(0)
     output = toinformal_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
     output = toinformal_token.decode(output[0], skip_special_tokens=True)
+    """
   else:
+    output = topolite_func(sentence, num_return_sequences=1)[0]['generated_text']
+    """
     input_ids = topolite_token.encode(sentence)
     input_ids = torch.tensor(input_ids)
     input_ids = input_ids.unsqueeze(0)
     output = topolite_model.generate(input_ids.to(to), eos_token_id=1, max_length=128, num_beams=5) #.to(to)
     output = topolite_token.decode(output[0], skip_special_tokens=True)
+    """
 
   return { "result" : True, "data" : output }
 

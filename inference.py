@@ -36,8 +36,8 @@ grammer_func = pipeline("text-classification", tokenizer=grammer, model=grammer,
 #emo_token = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-goemotions")
 #emo_model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-v3-goemotions")
 
-emo_token = ElectraTokenizer.from_pretrained("circulus/koelectra-emotion-v1",torch_dtype=torch.float16)
-emo_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-emotion-v1",torch_dtype=torch.float16)
+emo_token = ElectraTokenizer.from_pretrained("circulus/koelectra-emotion-v1") # torch_dtype=torch.float16
+emo_model = ElectraForMultiLabelClassification.from_pretrained("circulus/koelectra-emotion-v1") # torch_dtype=torch.float16
 emo_model.to(to)
 
 dialect_token = ElectraTokenizer.from_pretrained("circulus/koelectra-dialect-v1") # ,torch_dtype=torch.float16
@@ -67,29 +67,43 @@ chat_token = AutoTokenizer.from_pretrained("circulus/kobart-chat-all-v2")#,torch
 chat_model = AutoModelForSeq2SeqLM.from_pretrained("circulus/kobart-chat-all-v2")#,torch_dtype=torch.float16)
 chat_model.to(to)
 
-todialect_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-dialect-v2') #,torch_dtype=torch.float16)
-todialect_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-dialect-v2') #,torch_dtype=torch.float16)
-todialect_model.to(to)
+#todialect_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-dialect-v2') #,torch_dtype=torch.float16)
+#todialect_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-dialect-v2') #,torch_dtype=torch.float16)
+#todialect_model.to(to)
 
-tostandard_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-standard-v2')#,torch_dtype=torch.float16)
-tostandard_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-standard-v2')#,torch_dtype=torch.float16)
-tostandard_model.to(to)
+todialect = 'circulus/kobart-trans-dialect-v2'
+todialect_func = pipeline("text2text-generation", model=todialect, tokenizer=todialect, device=0)
 
-topolite_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-polite-v2')#,torch_dtype=torch.float16)
-topolite_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-polite-v2')#,torch_dtype=torch.float16)
-topolite_model.to(to)
+#tostandard_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-standard-v2')#,torch_dtype=torch.float16)
+#tostandard_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-standard-v2')#,torch_dtype=torch.float16)
+#tostandard_model.to(to)
 
-toformal_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-formal-v2')#,torch_dtype=torch.float16)
-toformal_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-formal-v2')#,torch_dtype=torch.float16)
-toformal_model.to(to)
+tostandard = 'circulus/kobart-trans-standard-v2'
+tostandard_func = pipeline("text2text-generation", model=tostandard, tokenizer=tostandard, device=0)
 
-toinformal_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-informal-v2')#,torch_dtype=torch.float16)
-toinformal_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-informal-v2')#,torch_dtype=torch.float16)
-toinformal_model.to(to)
+#topolite_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-polite-v2')#,torch_dtype=torch.float16)
+#topolite_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-polite-v2')#,torch_dtype=torch.float16)
+#topolite_model.to(to)
+topolite = 'circulus/kobart-trans-polite-v2'
+topolite_func = pipeline("text2text-generation", model=topolite, tokenizer=topolite, device=0)
 
-tocorrect_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-correct-v1')#,torch_dtype=torch.float16)
-tocorrect_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-correct-v1')#,torch_dtype=torch.float16)
-tocorrect_model.to(to)
+#toformal_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-formal-v2')#,torch_dtype=torch.float16)
+#toformal_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-formal-v2')#,torch_dtype=torch.float16)
+#toformal_model.to(to)
+toformal = 'circulus/kobart-trans-formal-v2'
+toformal_func = pipeline("text2text-generation", model=toformal, tokenizer=toformal, device=0)
+
+#toinformal_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-trans-informal-v2')#,torch_dtype=torch.float16)
+#toinformal_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-trans-informal-v2')#,torch_dtype=torch.float16)
+#toinformal_model.to(to)
+toinformal = 'circulus/kobart-trans-informal-v2'
+toinformal_func = pipeline("text2text-generation", model=toinformal, tokenizer=toinformal, device=0)
+
+#tocorrect_token = PreTrainedTokenizerFast.from_pretrained('circulus/kobart-correct-v1')#,torch_dtype=torch.float16)
+#tocorrect_model = BartForConditionalGeneration.from_pretrained('circulus/kobart-correct-v1')#,torch_dtype=torch.float16)
+#tocorrect_model.to(to)
+tocorrect = 'circulus/kobart-correct-v1'
+tocorrect_func = pipeline("text2text-generation", model=tocorrect, tokenizer=tocorrect, device=0)
 
 ner = "monologg/koelectra-base-v3-naver-ner"
 #ner_token = AutoTokenizer.from_pretrained("monologg/koelectra-base-v3-naver-ner") #,torch_dtype=torch.float16)
