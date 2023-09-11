@@ -280,7 +280,8 @@ def qa(query : Query):
     answer = re.sub(pattern=pattern, repl='', string=answer )
 
     list = mecab.pos(result["answer"]) 
-    print(list) 
+    #print(list)
+	
     for word in list: 
         print(word[1]) 
         #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
