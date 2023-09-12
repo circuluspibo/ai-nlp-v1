@@ -291,6 +291,10 @@ def language(input : str):
   return { "result" : True, "data" : langid.classify(input)[0] }
   #return { "result" : True, "data" : detect(input)['lang'] }
 
+@app.get("/v1/pos", summary="형태소 분석을 수행합니다.")
+def language(input : str):
+  return { "result" : True, "data" : mecab.pos(input)  }
+
 @app.get("/v2/dialog", summary="BART 기반의 자유 대화를 수행합니다. (좀더 형식적이지만 이해가능, 사투리나 어투 변환 내장)", description="type=PL(공손)/IF(반말)/JR(전라)/GS(경상)/JJ(제주)/GW(강원)/CC(충청)")
 def dialog2(input : str, type='PL'):
   encoded = chat_token.encode(f"<t>{type}</t>{input}")
