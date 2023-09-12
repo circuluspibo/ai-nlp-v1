@@ -209,6 +209,7 @@ def translate(sentence):
   return pipe_ko2en(sentence, num_return_sequences=1, max_length=1024)[0]['generated_text']
 
 def check(label):
+  print(label)
   if label == "LABEL_0":
     return False
   return True
