@@ -208,12 +208,13 @@ def translate(sentence):
   """
   return pipe_ko2en(sentence, num_return_sequences=1, max_length=1024)[0]['generated_text']
 
-def check(label):
-  print(label)
-  return label
-  #if label == "LABEL_0":
-  #  return False
-  #return True
+def check(obj):
+  print(obj)
+  if obj["label"] == "LABEL_0":
+    obj["label"] = False
+  else:
+    obj["label"] = True
+  return obj
 
 def translate2(sentence):
   return pipe_en2ko(sentence, num_return_sequences=1, max_length=1024)[0]['generated_text']
