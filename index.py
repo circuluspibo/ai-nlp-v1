@@ -208,6 +208,11 @@ def translate(sentence):
   """
   return pipe_ko2en(sentence, num_return_sequences=1, max_length=1024)[0]['generated_text']
 
+def check(label):
+  if label == "LABEL_0":
+    return False
+  return True
+
 def translate2(sentence):
   return pipe_en2ko(sentence, num_return_sequences=1, max_length=1024)[0]['generated_text']
 
@@ -283,8 +288,7 @@ def language(input : str):
   return { "result" : True, "data" : langid.classify(input)[0] }
   #return { "result" : True, "data" : detect(input)['lang'] }
 
-@app.get("/v2/dialog", summary="BART 기반의 자유 대화를 수행합니다. (좀더 형식적이지만 이해가능, 사투리나 어투 변환 내장)",
-  description="type=PL(공손)/IF(반말)/JR(전라)/GS(경상)/JJ(제주)/GW(강원)/CC(충청)")
+@app.get("/v2/dialog", summary="BART 기반의 자유 대화를 수행합니다. (좀더 형식적이지만 이해가능, 사투리나 어투 변환 내장)", description="type=PL(공손)/IF(반말)/JR(전라)/GS(경상)/JJ(제주)/GW(강원)/CC(충청)")
 def dialog2(input : str, type='PL'):
   encoded = chat_token.encode(f"<t>{type}</t>{input}")
   input_ids = torch.LongTensor(encoded).unsqueeze(dim=0)
@@ -476,17 +480,18 @@ def vector(sentence : str):
 @app.get("/v1/sentiment", summary="문장의 긍/부정을 분석합니다. LABEL_0 은 부정, LABEL_1 은 긍정입니다.")
 def sentiment(sentence : str):
   data = senti_func(sentence)
-  return { "result" : True, "data" : data }
+  return { "result" : True, "data" : check(data) }
 
 @app.get("/v1/polite", summary="문장이 존대말인지 아닌지를 확인합니다. LABEL_0 은 반말, LABEL_1은 존대말.")
 def polite(sentence : str):
   data = polite_func(sentence)
-  return { "result" : True, "data" : data }  
+
+  return { "result" : True, "data" : check(data) }  
 
 @app.get("/v1/grammer", summary="문장의 문법이 맞는지 확인합니다.. LABEL_0 은 문법 틀림., LABEL_1은 문법 맞음.")
 def grammer(sentence : str):
   data = grammer_func(sentence)
-  return { "result" : True, "data" : data }    
+  return { "result" : True, "data" : check(data) }    
 
 @app.get("/v1/emotion", summary="입력문장으로 부터 감성을 추출합니다.",
   description="neutral, angry, sadness, disgust, happiness, fear, surprise")
@@ -700,7 +705,6 @@ def tostyle(sentence : str, style="polite"):
 def qa(query : Query): 
   question = query.q
   context = query.c
-  print(query)
   result = qa_func({ "question" : question,  "context" : context }) 
   print(result) 
   answer = result["answer"] 
@@ -741,13 +745,12 @@ def qa(query : Query):
   result["answer"] = answer 
   return result 
 
-ENV = "OPS"
-
-conf = json.load(open('config.json', 'r'))
-CONF = conf[ENV]
-print(CONF)
-
-print("CIRCULUS_ENV: " + ENV)
-
 if __name__ == "__main__":
+  ENV = "OPS"
+
+  conf = json.load(open('config.json', 'r'))
+  CONF = conf[ENV]
+  print(CONF)
+
+  print("CIRCULUS_ENV: " + ENV)
   uvicorn.run("index:app",host=CONF["HOST"],port=CONF["PORT"])
