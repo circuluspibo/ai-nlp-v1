@@ -648,8 +648,11 @@ def en2ko(param : Param):
 
 @app.post("/v1/pdf2txt", summary="PDF로 부터 텍스트를 추출")
 def pdf2txt(file : UploadFile = File(...)): 
-
   text = ""
+  location = f"uploads/{file.filename}"
+  
+  with open(location, "wb+") as file_object:
+    file_object.write(file.file.read())
 
   doc = fitz.open(file.file)
   for page in doc:
