@@ -755,13 +755,13 @@ def qa(query : Query):
 # backward compatibility #
 @app.get("/think")
 async def think(q : str, style = 1):
-  a = await dialog2(q)
+  a = dialog2(q)
   print(a)
-  c = await wellness(q)
-  n = await ner(q)  
-  e = await emotion(q)
-  s = await sentiment(q)
-  t = await ethic(q)
+  c = wellness(q)
+  n = ner(q)  
+  e = emotion(q)
+  s = sentiment(q)
+  t = ethic(q)
   #v = await vector(q)
   
   return { "result" : True, "data" : { "ai" : { "q" : q ,"a" : a['data'] }, "sentiment" : s['data'], "care" : c['data'], "ner" : n['data'], "emotion" : e['data'], "ethic" : t["data"] }} # ,"vector": v['data']
