@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Elec
 from emotion.multilabel_pipeline import MultiLabelPipeline
 from emotion.model import ElectraForMultiLabelClassification
 from care.koelectra import koElectraForSequenceClassification
-from ast_models import ASTModel
+#from ast_models import ASTModel
 from huggingface_hub import hf_hub_download
 import torch
 
@@ -142,7 +142,7 @@ pipe_en2ko = pipeline("text2text-generation", model=en2ko, tokenizer=en2ko, devi
 
 print("loading ok!")
 
-
+"""
 model_path = hf_hub_download(repo_id="rippertnt/TTS-BASE", filename="audioset_0.4593.pth")
 evt_ckpt = torch.load(model_path, map_location="cuda")
 #evt_ckpt = torch.load('../circulus-napi-model/event/audioset_0.4593.pth', map_location=device)
@@ -151,3 +151,4 @@ evt_model = torch.nn.DataParallel(evt_model, device_ids=[0])
 evt_model.load_state_dict(evt_ckpt)
 evt_model.to("cuda")
 evt_model.eval()
+"""
