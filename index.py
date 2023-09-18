@@ -276,44 +276,6 @@ def load_category():
   
   return category
 
-
-
-def load_label(label_csv):
-    with open(label_csv, 'r') as f:
-        reader = csv.reader(f, delimiter=',')
-        lines = list(reader)
-    labels = []
-    ids = []  # Each label has a unique id such as "/m/068hy"
-    for i1 in range(1, len(lines)):
-        id = lines[i1][1]
-        label = lines[i1][2]
-        ids.append(id)
-        labels.append(label)
-    return labels
-
-labels = load_label('./label/class_labels_indices.csv')    
-
-def make_features(wav_name, mel_bins, target_length=1024):
-    waveform, sr = torchaudio.load(wav_name)
-
-    fbank = torchaudio.compliance.kaldi.fbank(
-        waveform, htk_compat=True, sample_frequency=sr, use_energy=False,
-        window_type='hanning', num_mel_bins=mel_bins, dither=0.0,
-        frame_shift=10)
-
-    n_frames = fbank.shape[0]
-
-    p = target_length - n_frames
-    if p > 0:
-        m = torch.nn.ZeroPad2d((0, 0, 0, p))
-        fbank = m(fbank)
-    elif p < 0:
-        fbank = fbank[0:target_length, :]
-
-    fbank = (fbank - (-4.2677393)) / (4.5689974 * 2)
-    return fbank
-
-
 category = load_category()
 
 @app.get("/")
