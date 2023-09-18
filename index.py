@@ -650,11 +650,11 @@ def en2ko(param : Param):
 def pdf2txt(file : UploadFile = File(...)): 
   text = ""
   location = f"uploads/{file.filename}"
-  
+
   with open(location, "wb+") as file_object:
     file_object.write(file.file.read())
 
-  doc = fitz.open(file.file)
+  doc = fitz.open(location)
   for page in doc:
     text = text + page.get_text()
   
