@@ -764,7 +764,7 @@ async def think(q : str, style = 1):
   t = ethic(q)
   #v = await vector(q)
   
-  return { "result" : True, "data" : { "ai" : { "q" : q ,"a" : a['data'] }, "sentiment" : s['data'], "care" : c['data'], "ner" : n['data'], "emotion" : e['data'], "ethic" : t["data"] }} # ,"vector": v['data']
+  return { "result" : True, "data" : { "ai" : { "q" : q ,"a" : a['data'][0] }, "sentiment" : s['data'], "care" : c['data'], "ner" : n['data'], "emotion" : e['data'], "ethic" : t["data"] }} # ,"vector": v['data']
 
 if __name__ == "__main__":
   ENV = "OPS"
