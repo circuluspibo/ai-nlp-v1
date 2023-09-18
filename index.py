@@ -42,6 +42,7 @@ import hashlib
 import os
 import json
 from  typing import List, Optional
+import fitz
 
 mecab = Mecab() 
 
@@ -644,6 +645,17 @@ def en2ko(param : Param):
   output = en2ko_token.decode(output[0], skip_special_tokens=True)
   """
   return { "result" : True, "data" : output['generated_text'] }
+
+@app.post("/v1/pdf2txt", summary="PDF로 부터 텍스트를 추출")
+def pdf2txt(file : UploadFile = File(...)): 
+
+  text = ""
+
+  doc = fitz.open(file.file)
+  for page in doc:
+    text = text + page.get_text()
+  
+  return { "result" : True, "data" : text}
 
 @app.post("/v2/en2ko", summary="영어를 한국어로 번역합니다. (streaming)")
 def en2ko2(param : Param):
