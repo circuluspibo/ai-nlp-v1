@@ -26,7 +26,7 @@ import numpy as np
 #from module.DialogService import predict_dialog
 #tocorrect_model,tocorrect_token,todialect_model,todialect_token,toformal_model,toformal_token,toinformal_model,toinformal_token,topolite_model,topolite_token,tostandard_model,tostandard_token,
 from inference import senti_func, polite_func, grammer_func, ner_func, emo_model,emo_token,dialect_model,dialect_token,summary_model,summary_token,hate_model,hate_token,copywrite_model,copywrite_token,act_model,act_token,well_config,well_model,well_token,chat_model,chat_token,letter_token,letter_model, pipe_en2ko,pipe_ko2en,qa_func
-from inference import tocorrect_func, todialect_func, toformal_func, toinformal_func, topolite_func, tostandard_func
+from inference import tocorrect_func, todialect_func, toformal_func, toinformal_func, topolite_func, tostandard_func,evt_model
 from care.koelectra import koelectra_input
 from bs4 import BeautifulSoup
 from threading import Event, Thread
@@ -275,6 +275,44 @@ def load_category():
     category.append(line_data.rstrip())
   
   return category
+
+
+
+def load_label(label_csv):
+    with open(label_csv, 'r') as f:
+        reader = csv.reader(f, delimiter=',')
+        lines = list(reader)
+    labels = []
+    ids = []  # Each label has a unique id such as "/m/068hy"
+    for i1 in range(1, len(lines)):
+        id = lines[i1][1]
+        label = lines[i1][2]
+        ids.append(id)
+        labels.append(label)
+    return labels
+
+labels = load_label('./label/class_labels_indices.csv')    
+
+def make_features(wav_name, mel_bins, target_length=1024):
+    waveform, sr = torchaudio.load(wav_name)
+
+    fbank = torchaudio.compliance.kaldi.fbank(
+        waveform, htk_compat=True, sample_frequency=sr, use_energy=False,
+        window_type='hanning', num_mel_bins=mel_bins, dither=0.0,
+        frame_shift=10)
+
+    n_frames = fbank.shape[0]
+
+    p = target_length - n_frames
+    if p > 0:
+        m = torch.nn.ZeroPad2d((0, 0, 0, p))
+        fbank = m(fbank)
+    elif p < 0:
+        fbank = fbank[0:target_length, :]
+
+    fbank = (fbank - (-4.2677393)) / (4.5689974 * 2)
+    return fbank
+
 
 category = load_category()
 
@@ -751,6 +789,30 @@ def qa(query : Query):
   
   result["answer"] = answer 
   return result 
+
+@app.post("/event", summary="(호환성) 소리로 부터 이벤트를 감지합니다.(ex 버스소리, 창문깨지는 소리, 비오는 소리 등등)")
+@app.post("/v1/event", summary="(호환성) 소리로 부터 이벤트를 감지합니다.(ex 버스소리, 창문깨지는 소리, 비오는 소리 등등)")
+def event(file : UploadFile = File(...)):
+    location = f"files/{file.filename}"
+
+    with open(location,"wb+") as file_object:
+        file_object.write(file.file.read())
+
+    feats = make_features(location, mel_bins=128)
+    input_tdim = feats.shape[0]
+    feats_data = feats.expand(1, input_tdim, 128) 
+                      
+    with torch.no_grad():
+        output = evt_model.forward(feats_data)
+        output = torch.sigmoid(output)
+    result_output = output.data.cpu().numpy()[0].astype(float)
+    sorted_indexes = np.argsort(result_output)[::-1]
+
+    result = []
+    for k in range(5):
+        if result_output[sorted_indexes[k]] > 0.3:
+            result.append([np.array(labels)[sorted_indexes[k]],result_output[sorted_indexes[k]]])
+    return { "result" : True, "data" : result }    
 
 if __name__ == "__main__":
   ENV = "OPS"
