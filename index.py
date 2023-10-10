@@ -721,8 +721,8 @@ def qa(query : Query):
       answer.replace("(","")
     else:
       answer = answer + ")"
-  #if answer.endswith('의'): 
-  #  answer = answer.replace("의","")       
+  if answer.endswith('의'): 
+    answer = answer.replace("의","")       
   answer = re.sub(pattern=pattern, repl='', string=answer )
 
   list = mecab.pos(result["answer"]) 
@@ -749,7 +749,7 @@ def qa(query : Query):
   
   print(last)
   if last != 0:
-    if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
+    if last[1].startswith('JKO') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
       answer = answer.replace(last[0],"")
   result["answer"] = answer 
   return result 
