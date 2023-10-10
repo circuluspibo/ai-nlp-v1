@@ -736,7 +736,7 @@ def qa(query : Query):
     #    answer = answer.replace('의','')
     #answer = answer.replace('이다','')
     #answer = answer.replace('라는','')
-    if word[1].startswith('JKO') or word[1].startswith('JKS')  or word[1].startswith('JX') or word[1].startswith('JC'): #or word[1].startswith('JKB')
+    if word[1].startswith('JKS')  or word[1].startswith('JX') or word[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
       answer = answer.replace(word[0],"")
     if word[1].startswith('VCP') or word[1].startswith('EC'): 
       answer = answer.replace(word[0],"") 
