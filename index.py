@@ -707,10 +707,6 @@ def tostyle(sentence : str, style="polite"):
 
   return { "result" : True, "data" : output }
 
-def replace_last(string, old, new):
-    old_idx = string.rfind(old)
-    return string[:old_idx] + new + string[old_idx+len(old):]
-
 @app.post("/qa") 
 @app.post("/v1/qa") 
 def qa(query : Query): 
@@ -762,8 +758,8 @@ def qa(query : Query):
   print(last)
   if last != 0:
     if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
-      if last[0].endswith('링') != True and answer.startswith('드 메랑') != True:
-        answer = replace_last(answer, last[0],"")
+      if last[0].endswith('링') != True and last[0].endswith('이') and answer.startswith('드 메랑') != True:
+        answer = answer.replace(last[0],"")
     """
     if word[1].startswith('VCP') or word[1].startswith('EC'): 
       answer = answer.replace(word[0],"") 
