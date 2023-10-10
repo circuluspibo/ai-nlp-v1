@@ -727,7 +727,7 @@ def qa(query : Query):
 
   list = mecab.pos(result["answer"]) 
   #print(list)
-  last 
+  last = 0
   for word in list: 
     last = word
     print(word[1], answer) 
@@ -747,9 +747,10 @@ def qa(query : Query):
     #    answer = answer + ")"
     #if answer.find(''  
   
-
-  if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
-    answer = answer.replace(last[0],"")
+  print(last)
+  if last is not 0:
+    if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
+      answer = answer.replace(last[0],"")
   result["answer"] = answer 
   return result 
 
