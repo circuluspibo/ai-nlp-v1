@@ -748,7 +748,7 @@ def qa(query : Query):
     #if answer.find(''  
   
   print(last)
-  if last is not 0:
+  if last != 0:
     if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
       answer = answer.replace(last[0],"")
   result["answer"] = answer 
