@@ -737,12 +737,6 @@ def qa(query : Query):
     #    answer = answer.replace('의','')
     #answer = answer.replace('이다','')
     #answer = answer.replace('라는','')
-    if word[1].startswith('VCP') or word[1].startswith('EC'): 
-      answer = answer.replace(word[0],"") 
-    if word[1].startswith('SS'): 
-      answer = answer.replace(word[0],"")   
-    if word[1].endswith('F'): 
-      answer = answer.replace(word[0],"")                        
     #if answer.find('(') > -1 and answer.find(')') < 0:
     #    answer = answer + ")"
     #if answer.find(''  
@@ -751,6 +745,12 @@ def qa(query : Query):
   if last != 0:
     if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
       answer = answer.replace(last[0],"")
+    if word[1].startswith('VCP') or word[1].startswith('EC'): 
+      answer = answer.replace(word[0],"") 
+    if word[1].startswith('SS'): 
+      answer = answer.replace(word[0],"")   
+    if word[1].endswith('F'): 
+      answer = answer.replace(word[0],"")                              
   result["answer"] = answer 
   return result 
 
