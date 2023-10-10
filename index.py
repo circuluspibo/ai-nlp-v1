@@ -721,14 +721,15 @@ def qa(query : Query):
       answer.replace("(","")
     else:
       answer = answer + ")"
-  if answer.endswith('의'): 
-    answer = answer.replace("의","")       
+  #if answer.endswith('의'): 
+  #  answer = answer.replace("의","")       
   answer = re.sub(pattern=pattern, repl='', string=answer )
 
   list = mecab.pos(result["answer"]) 
   #print(list)
-  
+  last 
   for word in list: 
+    last = word
     print(word[1], answer) 
     #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
     #if word[1].startswith('J'):
@@ -736,7 +737,7 @@ def qa(query : Query):
     #    answer = answer.replace('의','')
     #answer = answer.replace('이다','')
     #answer = answer.replace('라는','')
-    if word[1].startswith('JK')  or word[1].startswith('JX') or word[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
+    if word[1].startswith('JX') or word[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
       answer = answer.replace(word[0],"")
     if word[1].startswith('VCP') or word[1].startswith('EC'): 
       answer = answer.replace(word[0],"") 
@@ -747,8 +748,10 @@ def qa(query : Query):
     #if answer.find('(') > -1 and answer.find(')') < 0:
     #    answer = answer + ")"
     #if answer.find(''  
-  print(result)
   
+
+  if last[1].startswith('JK'):
+    answer = answer.replace(last[0],"")
   result["answer"] = answer 
   return result 
 
