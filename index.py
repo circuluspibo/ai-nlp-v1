@@ -753,11 +753,9 @@ def qa(query : Query):
     #if answer.find('(') > -1 and answer.find(')') < 0:
     #    answer = answer + ")"
     #if answer.find(''  
-  
-  print(last)
   if last != 0:
     if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
-      if last[0].endswith('링') != True and last[0].starswith('드 메랑') != True:
+      if last[0].endswith('링') != True and last[0].startswith('드 메랑') != True:
         answer = answer.replace(last[0],"")
     """
     if word[1].startswith('VCP') or word[1].startswith('EC'): 
