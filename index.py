@@ -729,7 +729,7 @@ def qa(query : Query):
   #print(list)
   
   for word in list: 
-    print(word[1]) 
+    print(word[1], answer) 
     #if word[1] in ["JX","JKB","JKO"]: #Josa #Adjective 
     #if word[1].startswith('J'):
     #if answer.endswith('의'):
