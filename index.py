@@ -722,7 +722,13 @@ def qa(query : Query):
     else:
       answer = answer + ")"
   if answer.endswith('의'): 
-    answer = answer.replace("의","")       
+    answer = answer.replace("의","")     
+  if answer.endswith('을'): 
+    answer = answer.replace("을","")           
+  if answer.endswith('를'): 
+    answer = answer.replace("를","")               
+  if answer.endswith('이다'): 
+    answer = answer.replace("이다","")                   
   answer = re.sub(pattern=pattern, repl='', string=answer )
 
   list = mecab.pos(result["answer"]) 
@@ -745,9 +751,9 @@ def qa(query : Query):
   if last != 0:
     if last[1].startswith('JK') or last[1].startswith('JX') or last[1].startswith('JC'): #or word[1].startswith('JKB') word[1].startswith('JKO')
       answer = answer.replace(last[0],"")
-    if word[1].startswith('VCP') or word[1].startswith('EC'): 
-      answer = answer.replace(word[0],"")       
     """
+    if word[1].startswith('VCP') or word[1].startswith('EC'): 
+      answer = answer.replace(word[0],"") 
     if word[1].startswith('SS'): 
       answer = answer.replace(word[0],"")   
     if word[1].endswith('F'): 
