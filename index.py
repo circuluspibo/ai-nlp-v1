@@ -16,8 +16,8 @@ from serverinfo import si
 #from diffusers import StableDiffusionPipeline
 
 #  from konlpy.tag import Mecab
-
 from eunjeon import Mecab   
+
 import json
 import torch
 import torch.nn as nn
@@ -42,7 +42,6 @@ import hashlib
 import os
 import json
 from  typing import List, Optional
-import fitz
 
 mecab = Mecab() 
 
@@ -646,20 +645,6 @@ def en2ko(param : Param):
   """
   return { "result" : True, "data" : output['generated_text'] }
 
-@app.post("/v1/pdf2txt", summary="PDF로 부터 텍스트를 추출")
-def pdf2txt(file : UploadFile = File(...)): 
-  text = ""
-  location = f"uploads/{file.filename}"
-
-  with open(location, "wb+") as file_object:
-    file_object.write(file.file.read())
-
-  doc = fitz.open(location)
-  for page in doc:
-    text = text + page.get_text()
-  
-  return { "result" : True, "data" : text}
-
 @app.post("/v2/en2ko", summary="영어를 한국어로 번역합니다. (streaming)")
 def en2ko2(param : Param):
   return StreamingResponse(stream_en2ko(param.prompt))
@@ -751,7 +736,7 @@ def qa(query : Query):
     #    answer = answer.replace('의','')
     #answer = answer.replace('이다','')
     #answer = answer.replace('라는','')
-    if word[1].startswith('JKO') or word[1].startswith('JKS') or word[1].startswith('JKB') or word[1].startswith('JX') or word[1].startswith('JC'): 
+    if word[1].startswith('JKO') or word[1].startswith('JKS')  or word[1].startswith('JX') or word[1].startswith('JC'): #or word[1].startswith('JKB')
       answer = answer.replace(word[0],"")
     if word[1].startswith('VCP'): 
       answer = answer.replace(word[0],"") 
@@ -769,7 +754,7 @@ def qa(query : Query):
 
 # backward compatibility #
 @app.get("/think")
-async def think(q : str, style = 1):
+def think(q : str, style = 1):
   a = dialog2(q)
   print(a)
   c = wellness(q)
@@ -779,7 +764,7 @@ async def think(q : str, style = 1):
   t = ethic(q)
   #v = await vector(q)
   
-  return { "result" : True, "data" : { "ai" : { "q" : q ,"a" : a['data'][0] }, "sentiment" : s['data'], "care" : c['data'], "ner" : n['data'], "emotion" : e['data'], "ethic" : t["data"] }} # ,"vector": v['data']
+  return { "result" : True, "data" : { "ai" : { "q" : q ,"a" : a['data'] }, "sentiment" : s['data'], "care" : c['data'], "ner" : n['data'], "emotion" : e['data'], "ethic" : t["data"] }} # ,"vector": v['data']
 
 if __name__ == "__main__":
   ENV = "OPS"
