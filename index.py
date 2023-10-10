@@ -723,6 +723,8 @@ def qa(query : Query):
       answer = answer + ")"
   if answer.endswith('과의'): 
     answer = answer.replace("과의","")           
+  if answer.endswith('에서'): 
+    answer = answer.replace("에서","")           
   if answer.endswith('의'): 
     answer = answer.replace("의","")     
   if answer.endswith('을'): 
