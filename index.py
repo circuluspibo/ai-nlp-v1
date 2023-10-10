@@ -734,9 +734,7 @@ def qa(query : Query):
   if answer.endswith('이다'): 
     answer = answer.replace("이다","")                   
   if answer.endswith('라는'): 
-    answer = answer.replace("라는","")   
-  if answer.endswith('에서'): 
-    answer = answer.replace("에서","")         
+    answer = answer.replace("라는","")          
   answer = re.sub(pattern=pattern, repl='', string=answer )
 
   list = mecab.pos(result["answer"]) 
@@ -768,6 +766,9 @@ def qa(query : Query):
     if word[1].endswith('F'): 
       answer = answer.replace(word[0],"")                              
     """
+  if answer.endswith('에'): 
+    answer = answer.replace("에","")  
+
   result["answer"] = answer 
   return result 
 
