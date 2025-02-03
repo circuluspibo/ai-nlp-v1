@@ -15,8 +15,8 @@ import py3langid as langid
 from serverinfo import si
 #from diffusers import StableDiffusionPipeline
 
-#  from konlpy.tag import Mecab
-from eunjeon import Mecab   
+from konlpy.tag import Mecab
+#from eunjeon import Mecab   
 
 import json
 import torch
@@ -55,12 +55,12 @@ class Param(BaseModel):
 class Chat(BaseModel):
   prompt : str
   history : list
-  lang = "auto"
-  type = "assist"
-  temp = 0.5
-  top_p = 1.0
-  top_k = 0
-  max = 1024
+  lang : str = "auto"
+  type : str =  "assist"
+  temp : float = 0.5
+  top_p : float = 1.0
+  top_k : int = 0
+  max : int = 1024
 
 pattern = r'\([^])]*\)'
 
